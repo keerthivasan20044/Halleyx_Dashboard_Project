@@ -105,18 +105,18 @@ const OrderModal = ({ order, onSave, onClose }) => {
   const creators = CREATORS;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full my-4 max-h-none md:max-h-[90vh] overflow-visible md:overflow-auto">
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-          <h3 className="text-xl font-semibold text-gray-900">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start sm:items-center justify-center z-50 p-2 sm:p-4 overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full my-2 sm:my-4 max-h-none sm:max-h-[95vh] overflow-visible sm:overflow-auto">
+        <div className="sticky top-0 bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
+          <h3 className="text-lg sm:text-xl font-semibold text-gray-900 truncate pr-2">
             {order ? 'Edit Order' : 'Create New Order'}
           </h3>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
-            <X size={24} className="text-gray-500" />
+          <button onClick={onClose} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0">
+            <X size={20} className="sm:w-6 sm:h-6 text-gray-500" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6">
           {/* Customer Information */}
           <div className="mb-6">
             <h4 className="text-lg font-semibold text-gray-900 mb-4">Customer Information</h4>

@@ -33,6 +33,7 @@ const Layout = ({ children }) => {
         transform transition-transform duration-300 ease-in-out
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         ${isOrdersPage ? 'md:hidden lg:hidden xl:hidden' : 'lg:static lg:translate-x-0'}
+        shadow-lg lg:shadow-none
       `}>
         <div className="p-6 border-b border-gray-200 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
@@ -69,27 +70,27 @@ const Layout = ({ children }) => {
       <main className="flex-1 flex flex-col md:overflow-hidden">
         {/* Mobile Menu Button - Hidden on Builder and Dashboard pages */}
         {!isBuilderPage && !isDashboardPage && !isOrdersPage && (
-        <div className="lg:hidden bg-white border-b border-gray-200 p-4 flex items-center gap-3">
+        <div className="lg:hidden bg-white border-b border-gray-200 p-3 md:p-4 flex items-center gap-3">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 hover:bg-gray-100 rounded-lg"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            <Menu size={24} />
+            <Menu size={20} className="md:w-6 md:h-6" />
           </button>
-          <h1 className="text-xl font-bold text-gray-900">Dashboard</h1>
+          <h1 className="text-lg md:text-xl font-bold text-gray-900">Dashboard</h1>
         </div>
         )}
         
         {/* Mobile Menu Button for Orders page - Only visible on mobile */}
         {isOrdersPage && (
-        <div className="md:hidden bg-white border-b border-gray-200 p-4 flex items-center gap-3">
+        <div className="md:hidden bg-white border-b border-gray-200 p-3 md:p-4 flex items-center gap-3">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 hover:bg-gray-100 rounded-lg"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            <Menu size={24} />
+            <Menu size={20} className="md:w-6 md:h-6" />
           </button>
-          <h1 className="text-xl font-bold text-gray-900">Orders</h1>
+          <h1 className="text-lg md:text-xl font-bold text-gray-900">Orders</h1>
         </div>
         )}
         

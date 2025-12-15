@@ -153,55 +153,57 @@ const Orders = () => {
   return (
     <div className="min-h-screen md:h-full md:flex md:flex-col bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-4 md:py-6 md:flex-shrink-0">
+      <header className="bg-white border-b border-gray-200 px-3 sm:px-4 lg:px-6 py-3 sm:py-4 lg:py-6 md:flex-shrink-0">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col gap-4 mb-4 md:mb-6">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col gap-3 sm:gap-4 mb-3 sm:mb-4 lg:mb-6">
+            <div className="flex items-center gap-3 sm:gap-4">
               <button
                 onClick={() => navigate('/')}
-                className="hidden lg:flex items-center justify-center w-10 h-10 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-150"
+                className="hidden lg:flex items-center justify-center w-9 h-9 xl:w-10 xl:h-10 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-150"
               >
-                <ArrowLeft size={20} />
+                <ArrowLeft size={18} className="xl:w-5 xl:h-5" />
               </button>
-              <div>
-                <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-1">Customer Orders</h1>
-                <p className="text-sm md:text-base text-gray-600 hidden md:block">View and manage customer orders and details</p>
+              <div className="min-w-0 flex-1">
+                <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-1 truncate">Customer Orders</h1>
+                <p className="text-xs sm:text-sm lg:text-base text-gray-600 hidden sm:block">View and manage customer orders and details</p>
               </div>
             </div>
             
-            <div className="flex flex-col gap-3">
-              <DateFilter value={dateFilter} onChange={setDateFilter} />
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                <input
-                  type="text"
-                  placeholder="Search orders..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-sm transition-colors duration-150"
-                />
+            <div className="flex flex-col sm:flex-row gap-3 sm:items-end">
+              <div className="flex-1 space-y-3">
+                <DateFilter value={dateFilter} onChange={setDateFilter} />
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} className="sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
+                  <input
+                    type="text"
+                    placeholder="Search orders..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-sm transition-colors duration-150"
+                  />
+                </div>
               </div>
               <button
                 onClick={handleCreate}
-                className="bg-primary text-white px-5 py-2.5 rounded-lg font-medium hover:bg-primary/90 flex items-center justify-center gap-2 text-sm transition-all duration-150 shadow-sm hover:shadow-md w-full md:w-auto"
+                className="bg-primary text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg font-medium hover:bg-primary/90 flex items-center justify-center gap-2 text-sm transition-all duration-150 shadow-sm hover:shadow-md w-full sm:w-auto flex-shrink-0"
               >
-                <Plus size={18} />
+                <Plus size={16} className="sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
                 <span>New Order</span>
               </button>
             </div>
           </div>
           
-          <div className="flex border-b border-gray-200">
+          <div className="flex border-b border-gray-200 -mx-3 sm:-mx-4 lg:-mx-6 px-3 sm:px-4 lg:px-6">
             <button 
               onClick={() => navigate('/')}
-              className="flex-1 md:flex-none pb-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium flex items-center justify-center md:justify-start gap-2 text-sm md:text-base"
+              className="flex-1 sm:flex-none pb-2 sm:pb-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium flex items-center justify-center sm:justify-start gap-1 sm:gap-2 text-xs sm:text-sm lg:text-base min-w-0"
             >
-              <LayoutDashboard size={18} />
-              <span>Dashboard</span>
+              <LayoutDashboard size={16} className="sm:w-4 sm:h-4 lg:w-5 lg:h-5 flex-shrink-0" />
+              <span className="truncate">Dashboard</span>
             </button>
-            <button className="flex-1 md:flex-none pb-3 border-b-2 border-primary text-primary font-medium flex items-center justify-center md:justify-start gap-2 text-sm md:text-base ml-0 md:ml-8">
-              <Table size={18} />
-              <span>Table</span>
+            <button className="flex-1 sm:flex-none pb-2 sm:pb-3 border-b-2 border-primary text-primary font-medium flex items-center justify-center sm:justify-start gap-1 sm:gap-2 text-xs sm:text-sm lg:text-base ml-4 sm:ml-6 lg:ml-8 min-w-0">
+              <Table size={16} className="sm:w-4 sm:h-4 lg:w-5 lg:h-5 flex-shrink-0" />
+              <span className="truncate">Table</span>
             </button>
           </div>
         </div>
@@ -228,15 +230,15 @@ const Orders = () => {
           ) : (
             <>
               {/* Mobile Card View */}
-              <div className="md:hidden space-y-4">
+              <div className="lg:hidden space-y-3 sm:space-y-4">
                 {filteredOrders.map((order) => (
-                  <div key={order.id} className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 relative">
-                    <div className="flex justify-between items-start mb-3">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold text-gray-900">
+                  <div key={order.id} className="bg-white rounded-lg shadow-sm border border-gray-100 p-3 sm:p-4 relative">
+                    <div className="flex justify-between items-start mb-2 sm:mb-3">
+                      <div className="flex items-center gap-1 sm:gap-2 min-w-0 flex-1">
+                        <span className="text-xs sm:text-sm font-semibold text-gray-900 truncate">
                           #{order.orderId || order.id.slice(0, 8)}
                         </span>
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                        <span className={`inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0 ${
                           order.status === 'Completed' ? 'bg-green-100 text-green-800' :
                           order.status === 'In progress' ? 'bg-yellow-100 text-yellow-800' :
                           'bg-red-100 text-red-800'
@@ -244,7 +246,7 @@ const Orders = () => {
                           {order.status === 'Completed' && '🟢'}
                           {order.status === 'In progress' && '🟡'}
                           {order.status === 'Cancelled' && '🔴'}
-                          {order.status}
+                          <span className="hidden sm:inline ml-1">{order.status}</span>
                         </span>
                       </div>
                       <button
@@ -252,60 +254,60 @@ const Orders = () => {
                           e.stopPropagation();
                           setContextMenu(contextMenu === order.id ? null : order.id);
                         }}
-                        className="p-1 text-gray-400 hover:text-gray-600 rounded"
+                        className="p-1 text-gray-400 hover:text-gray-600 rounded flex-shrink-0"
                       >
-                        <MoreVertical size={16} />
+                        <MoreVertical size={14} className="sm:w-4 sm:h-4" />
                       </button>
                     </div>
                     
-                    <div className="space-y-2 mb-4">
-                      <div>
-                        <span className="text-sm font-medium text-gray-600">Customer: </span>
-                        <span className="text-sm text-gray-900">
+                    <div className="space-y-1.5 sm:space-y-2 mb-3 sm:mb-4">
+                      <div className="min-w-0">
+                        <span className="text-xs sm:text-sm font-medium text-gray-600">Customer: </span>
+                        <span className="text-xs sm:text-sm text-gray-900 break-words">
                           {order.customerName || `${order.firstName} ${order.lastName}`}
                         </span>
                       </div>
-                      <div>
-                        <span className="text-sm font-medium text-gray-600">Product: </span>
-                        <span className="text-sm text-gray-900">
-                          {order.product?.length > 30 ? `${order.product.substring(0, 30)}...` : order.product || 'No product'}
+                      <div className="min-w-0">
+                        <span className="text-xs sm:text-sm font-medium text-gray-600">Product: </span>
+                        <span className="text-xs sm:text-sm text-gray-900 break-words">
+                          {order.product?.length > (window.innerWidth < 640 ? 25 : 30) ? `${order.product.substring(0, window.innerWidth < 640 ? 25 : 30)}...` : order.product || 'No product'}
                         </span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className="flex justify-between items-center">
                         <div>
-                          <span className="text-sm font-medium text-gray-600">Qty: </span>
-                          <span className="text-sm text-gray-900">{order.quantity}</span>
+                          <span className="text-xs sm:text-sm font-medium text-gray-600">Qty: </span>
+                          <span className="text-xs sm:text-sm text-gray-900">{order.quantity}</span>
                         </div>
-                        <div>
-                          <span className="text-sm font-medium text-gray-600">Total: </span>
-                          <span className="text-sm font-semibold text-gray-900">
+                        <div className="text-right">
+                          <span className="text-xs sm:text-sm font-medium text-gray-600">Total: </span>
+                          <span className="text-xs sm:text-sm font-semibold text-gray-900">
                             ${parseFloat(order.total).toFixed(2)}
                           </span>
                         </div>
                       </div>
                     </div>
                     
-                    <div className="flex gap-2">
+                    <div className="flex gap-1.5 sm:gap-2">
                       <button
                         onClick={() => handleEdit(order)}
-                        className="flex-1 bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 flex items-center justify-center gap-2"
+                        className="flex-1 bg-gray-100 text-gray-700 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium hover:bg-gray-200 flex items-center justify-center gap-1 sm:gap-2 transition-colors"
                       >
-                        <Eye size={14} />
-                        View
+                        <Eye size={12} className="sm:w-3.5 sm:h-3.5" />
+                        <span className="hidden sm:inline">View</span>
                       </button>
                       <button
                         onClick={() => handleEdit(order)}
-                        className="flex-1 bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-blue-200 flex items-center justify-center gap-2"
+                        className="flex-1 bg-blue-100 text-blue-700 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium hover:bg-blue-200 flex items-center justify-center gap-1 sm:gap-2 transition-colors"
                       >
-                        <Edit size={14} />
-                        Edit
+                        <Edit size={12} className="sm:w-3.5 sm:h-3.5" />
+                        <span className="hidden sm:inline">Edit</span>
                       </button>
                       <button
                         onClick={() => handleDelete(order)}
-                        className="flex-1 bg-red-100 text-red-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-red-200 flex items-center justify-center gap-2"
+                        className="flex-1 bg-red-100 text-red-700 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium hover:bg-red-200 flex items-center justify-center gap-1 sm:gap-2 transition-colors"
                       >
-                        <Trash2 size={14} />
-                        Delete
+                        <Trash2 size={12} className="sm:w-3.5 sm:h-3.5" />
+                        <span className="hidden sm:inline">Delete</span>
                       </button>
                     </div>
                     

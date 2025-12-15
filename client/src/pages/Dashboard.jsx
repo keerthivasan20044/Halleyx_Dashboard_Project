@@ -169,20 +169,22 @@ const Dashboard = () => {
   return (
     <div className="flex flex-col min-h-screen md:h-full bg-gray-50">
       {/* Header Section */}
-      <div className="bg-white border-b border-gray-200 px-6 py-6">
+      <div className="bg-white border-b border-gray-200 px-3 sm:px-4 lg:px-6 py-4 sm:py-5 lg:py-6">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col gap-4 mb-6">
+          <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-5 lg:mb-6">
             <div>
-              <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-1">Customer Orders</h1>
-              <p className="text-sm md:text-base text-gray-600">View and manage customer orders and details</p>
+              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-1">Customer Orders</h1>
+              <p className="text-xs sm:text-sm lg:text-base text-gray-600">View and manage customer orders and details</p>
             </div>
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              <DateFilter value={dateFilter} onChange={handleDateFilterChange} />
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+              <div className="flex-1">
+                <DateFilter value={dateFilter} onChange={handleDateFilterChange} />
+              </div>
               <button
                 onClick={() => navigate('/builder')}
-                className="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors inline-flex items-center justify-center gap-2 text-sm w-full sm:w-auto"
+                className="bg-primary text-white px-3 sm:px-4 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors inline-flex items-center justify-center gap-2 text-xs sm:text-sm w-full sm:w-auto flex-shrink-0"
               >
-                <Settings size={16} />
+                <Settings size={14} className="sm:w-4 sm:h-4" />
                 <span>Configure</span>
               </button>
             </div>
