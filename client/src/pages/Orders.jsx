@@ -151,7 +151,7 @@ const Orders = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen md:h-full bg-gray-50" style={{ WebkitOverflowScrolling: 'touch' }}>
+    <div className="md:flex md:flex-col md:h-full bg-gray-50">
       <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-4 md:py-6 flex-shrink-0">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col gap-4 mb-4 md:mb-6">
@@ -209,7 +209,7 @@ const Orders = () => {
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto md:overflow-hidden p-4 md:p-6" style={{ minHeight: 0 }}>
+      <div className="md:flex-1 md:overflow-hidden p-4 md:p-6">
         {filteredOrders.length === 0 ? (
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 h-full flex flex-col items-center justify-center p-8">
             <div className="text-center text-gray-500">
@@ -228,7 +228,7 @@ const Orders = () => {
         ) : (
           <>
             {/* Mobile Card View */}
-            <div className="md:hidden space-y-4 pb-4 overflow-y-visible">
+            <div className="md:hidden space-y-4 pb-20">
               {filteredOrders.map((order) => (
                 <div key={order.id} className="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
                   <div className="flex justify-between items-start mb-3">
