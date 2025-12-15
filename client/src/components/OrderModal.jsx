@@ -51,7 +51,8 @@ const OrderModal = ({ order, onSave, onClose }) => {
       }
       
       if (field === 'quantity' || field === 'unitPrice') {
-        updated.total = parseFloat(((updated.quantity || 1) * (updated.unitPrice || 0)).toFixed(2));
+        const qty = updated.quantity === '' ? 0 : (updated.quantity || 1);
+        updated.total = parseFloat((qty * (updated.unitPrice || 0)).toFixed(2));
       }
       
       return updated;
@@ -296,7 +297,7 @@ const OrderModal = ({ order, onSave, onClose }) => {
                   min="1"
                   value={formData.quantity}
                   onInput={(e) => {
-                    e.target.value = e.target.value.replace(/[^0-9]/g, '').replace(/^0+(?=\d)/, '') || (e.target.value === '0' ? '0' : '1');
+                    e.target.value = e.target.value.replace(/[^1-9]/g, '') || '1';
                   }}
                   onChange={(e) => handleChange('quantity', parseInt(e.target.value) || 1)}
                   className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
@@ -332,7 +333,7 @@ const OrderModal = ({ order, onSave, onClose }) => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Total</label>
                 <input
                   type="text"
-                  value={`$${((formData.quantity || 1) * (formData.unitPrice || 0)).toFixed(2)}`}
+                  value={`$${((formData.quantity === '' ? 0 : (formData.quantity || 1)) * (formData.unitPrice || 0)).toFixed(2)}`}
                   readOnly
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600"
                 />
