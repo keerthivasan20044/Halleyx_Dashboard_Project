@@ -57,6 +57,22 @@ const Builder = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Prevent body scroll when widget config is open on mobile
+  useEffect(() => {
+    if (selectedWidget && isMobile) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    }
+    
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    };
+  }, [selectedWidget, isMobile]);
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -445,8 +461,8 @@ const Builder = () => {
 
       {/* Configuration Panel - Mobile Overlay */}
       {selectedWidget && (
-        <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end animate-fadeIn">
-          <div className="bg-white w-full max-h-[80vh] rounded-t-2xl overflow-y-auto animate-slideUp">
+        <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end animate-fadeIn modal-overlay">
+          <div className="bg-white w-full max-h-[80vh] rounded-t-2xl overflow-y-auto animate-slideUp widget-config-panel">
             <WidgetConfig
               widget={selectedWidget}
               onConfigChange={handleConfigChange}
