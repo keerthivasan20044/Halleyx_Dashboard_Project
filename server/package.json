@@ -1,0 +1,29 @@
+{
+  "name": "dashboard-builder-server",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Modern MERN Dashboard Builder - Server",
+  "author": "keerthivasan.R",
+  "license": "MIT",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "seed": "node src/scripts/seed.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "mongoose": "^9.0.1",
+    "dotenv": "^16.4.7",
+    "cors": "^2.8.5",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

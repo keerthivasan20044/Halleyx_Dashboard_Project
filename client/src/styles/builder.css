@@ -1,0 +1,231 @@
+/* Grid background for builder only - Pixel-style blocks */
+.builder-grid {
+  position: relative;
+  background-color: #f9fafb;
+}
+
+.builder-grid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: 
+    radial-gradient(circle at 1px 1px, #f3f4f6 1px, transparent 0);
+  background-size: 96px 96px;
+  background-position: 24px 24px;
+  opacity: 0.8;
+}
+
+/* Desktop: 12 columns */
+@media (min-width: 1024px) {
+  .builder-grid::before {
+    background-size: calc(100% / 12) 96px;
+    background-image: 
+      repeating-linear-gradient(
+        90deg,
+        #f3f4f6 0,
+        #f3f4f6 calc(100% / 12 - 16px),
+        transparent calc(100% / 12 - 16px),
+        transparent calc(100% / 12)
+      ),
+      repeating-linear-gradient(
+        0deg,
+        #f3f4f6 0,
+        #f3f4f6 80px,
+        transparent 80px,
+        transparent 96px
+      );
+  }
+}
+
+/* Tablet: 8 columns */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .builder-grid::before {
+    background-size: calc(100% / 8) 96px;
+    background-image: 
+      repeating-linear-gradient(
+        90deg,
+        #f3f4f6 0,
+        #f3f4f6 calc(100% / 8 - 16px),
+        transparent calc(100% / 8 - 16px),
+        transparent calc(100% / 8)
+      ),
+      repeating-linear-gradient(
+        0deg,
+        #f3f4f6 0,
+        #f3f4f6 80px,
+        transparent 80px,
+        transparent 96px
+      );
+  }
+}
+
+/* Mobile: 4 columns */
+@media (max-width: 767px) {
+  .builder-grid::before {
+    background-size: calc(100% / 4) 72px;
+    background-image: 
+      repeating-linear-gradient(
+        90deg,
+        #f3f4f6 0,
+        #f3f4f6 calc(100% / 4 - 12px),
+        transparent calc(100% / 4 - 12px),
+        transparent calc(100% / 4)
+      ),
+      repeating-linear-gradient(
+        0deg,
+        #f3f4f6 0,
+        #f3f4f6 60px,
+        transparent 60px,
+        transparent 72px
+      );
+  }
+}
+
+/* Ensure widgets appear above grid */
+.react-grid-layout {
+  position: relative;
+  z-index: 1;
+}
+
+/* Responsive sidebar - now handled with Tailwind classes in component */
+
+/* Widget hover effects */
+.widget-container {
+  transition: all 0.2s ease;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: relative;
+  z-index: 10;
+}
+
+.widget-container:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.widget-actions {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.widget-container:hover .widget-actions {
+  opacity: 1;
+}
+
+/* Mobile touch improvements */
+@media (max-width: 768px) {
+  .widget-container {
+    touch-action: manipulation;
+  }
+  
+  .widget-actions {
+    opacity: 1 !important;
+  }
+  
+  .drag-handle {
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+  }
+  
+  .react-grid-item {
+    touch-action: none;
+  }
+  
+  .react-grid-item.react-draggable-dragging {
+    z-index: 1000;
+    opacity: 0.8;
+    transform: scale(1.05) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  /* Prevent page scroll during drag */
+  body.dragging {
+    overflow: hidden !important;
+    touch-action: none !important;
+  }
+}
+
+/* Tablet improvements */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .widget-container {
+    touch-action: manipulation;
+  }
+  
+  .drag-handle {
+    touch-action: none;
+  }
+  
+  .react-grid-item.react-draggable-dragging {
+    z-index: 100;
+    opacity: 0.9;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Touch drag support */
+.drag-handle {
+  touch-action: manipulation;
+}
+
+@media (max-width: 768px) {
+  .drag-handle {
+    touch-action: none;
+  }
+}
+
+/* Touch-friendly resize handles */
+@media (max-width: 1023px) {
+  .react-resizable-handle {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .react-resizable-handle::after {
+    width: 8px;
+    height: 8px;
+    border-width: 3px;
+  }
+}
+
+/* Mobile drag feedback */
+@media (max-width: 768px) {
+  .react-grid-placeholder {
+    background: #10b981;
+    opacity: 0.4;
+    border: 3px dashed #10b981;
+    border-radius: 12px;
+  }
+  
+  .widget-container.react-draggable-dragging {
+    transform: scale(1.05) !important;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3) !important;
+    border: 2px solid #10b981 !important;
+  }
+}
+
+/* Prevent text selection during drag */
+.react-grid-layout {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: relative;
+  z-index: 1;
+}
+
+/* Improve touch targets */
+@media (max-width: 768px) {
+  .widget-actions button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
