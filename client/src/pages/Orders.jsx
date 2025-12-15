@@ -144,19 +144,19 @@ const Orders = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="flex items-center justify-center min-h-screen md:h-full">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   return (
-    <div className="md:flex md:flex-col md:h-full bg-gray-50">
-      <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-4 md:py-6 flex-shrink-0">
+    <div className="min-h-screen md:h-full md:flex md:flex-col bg-gray-50">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-4 md:py-6 md:flex-shrink-0">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col gap-4 mb-4 md:mb-6">
             <div className="flex items-center gap-4">
-              {/* Back Arrow - Only visible on desktop */}
               <button
                 onClick={() => navigate('/')}
                 className="hidden lg:flex items-center justify-center w-10 h-10 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-150"
@@ -169,7 +169,6 @@ const Orders = () => {
               </div>
             </div>
             
-            {/* Mobile-first layout */}
             <div className="flex flex-col gap-3">
               <DateFilter value={dateFilter} onChange={setDateFilter} />
               <div className="relative">
@@ -192,7 +191,6 @@ const Orders = () => {
             </div>
           </div>
           
-          {/* Tabs - Mobile friendly */}
           <div className="flex border-b border-gray-200">
             <button 
               onClick={() => navigate('/')}
@@ -209,247 +207,247 @@ const Orders = () => {
         </div>
       </header>
 
-      <div className="md:flex-1 md:overflow-hidden p-4 md:p-6">
-        {filteredOrders.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-100 h-full flex flex-col items-center justify-center p-8">
-            <div className="text-center text-gray-500">
-              <div className="text-6xl mb-4">📦</div>
-              <p className="text-lg font-medium mb-2">No orders found</p>
-              <p className="text-sm mb-6">Start by creating your first order</p>
-              <button
-                onClick={handleCreate}
-                className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary/90 flex items-center gap-2 mx-auto"
-              >
-                <Plus size={18} />
-                New Order
-              </button>
-            </div>
-          </div>
-        ) : (
-          <>
-            {/* Mobile Card View */}
-            <div className="md:hidden space-y-4 pb-20">
-              {filteredOrders.map((order) => (
-                <div key={order.id} className="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-semibold text-gray-900">
-                        #{order.orderId || order.id.slice(0, 8)}
-                      </span>
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                        order.status === 'Completed' ? 'bg-green-100 text-green-800' :
-                        order.status === 'In progress' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        {order.status === 'Completed' && '🟢'}
-                        {order.status === 'In progress' && '🟡'}
-                        {order.status === 'Cancelled' && '🔴'}
-                        {order.status}
-                      </span>
-                    </div>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setContextMenu(contextMenu === order.id ? null : order.id);
-                      }}
-                      className="p-1 text-gray-400 hover:text-gray-600 rounded"
-                    >
-                      <MoreVertical size={16} />
-                    </button>
-                  </div>
-                  
-                  <div className="space-y-2 mb-4">
-                    <div>
-                      <span className="text-sm font-medium text-gray-600">Customer: </span>
-                      <span className="text-sm text-gray-900">
-                        {order.customerName || `${order.firstName} ${order.lastName}`}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-sm font-medium text-gray-600">Product: </span>
-                      <span className="text-sm text-gray-900">
-                        {order.product.length > 30 ? `${order.product.substring(0, 30)}...` : order.product}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <div>
-                        <span className="text-sm font-medium text-gray-600">Qty: </span>
-                        <span className="text-sm text-gray-900">{order.quantity}</span>
-                      </div>
-                      <div>
-                        <span className="text-sm font-medium text-gray-600">Total: </span>
-                        <span className="text-sm font-semibold text-gray-900">
-                          ${parseFloat(order.total).toFixed(2)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleEdit(order)}
-                      className="flex-1 bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 flex items-center justify-center gap-2"
-                    >
-                      <Eye size={14} />
-                      View
-                    </button>
-                    <button
-                      onClick={() => handleEdit(order)}
-                      className="flex-1 bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-blue-200 flex items-center justify-center gap-2"
-                    >
-                      <Edit size={14} />
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(order)}
-                      className="flex-1 bg-red-100 text-red-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-red-200 flex items-center justify-center gap-2"
-                    >
-                      <Trash2 size={14} />
-                      Delete
-                    </button>
-                  </div>
-                  
-                  {/* Mobile Context Menu */}
-                  {contextMenu === order.id && (
-                    <div className="absolute right-4 top-16 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-50 py-1">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEdit(order);
-                        }}
-                        className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3"
-                      >
-                        <Eye size={14} className="text-gray-400" />
-                        View Details
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEdit(order);
-                        }}
-                        className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3"
-                      >
-                        <Edit size={14} className="text-gray-400" />
-                        Edit Order
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(order);
-                        }}
-                        className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-3"
-                      >
-                        <Trash2 size={14} className="text-red-500" />
-                        Delete Order
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-            
-            {/* Desktop Table View */}
-            <div className="hidden md:block bg-white rounded-lg shadow-sm border border-gray-100 h-full">
-              <div className="h-full overflow-auto">
-                <table className="w-full table-fixed">
-                  <thead className="bg-gray-50 sticky top-0 z-10">
-                    <tr className="border-b border-gray-200">
-                      <th className="w-24 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Order ID</th>
-                      <th className="w-40 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Customer</th>
-                      <th className="w-48 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
-                      <th className="w-40 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Product</th>
-                      <th className="w-20 px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Qty</th>
-                      <th className="w-24 px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Unit Price</th>
-                      <th className="w-24 px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Total</th>
-                      <th className="w-28 px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
-                      <th className="w-32 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Created By</th>
-                      <th className="w-20 px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-100">
-                    {filteredOrders.map((order) => (
-                      <tr key={order.id} className="hover:bg-gray-50 transition-colors duration-150">
-                        <td className="px-6 py-4 text-sm font-medium text-gray-900 truncate">
-                          #{order.orderId || order.id.slice(0, 8)}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-900 truncate">
-                          {order.customerName || `${order.firstName} ${order.lastName}`}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-500 truncate">
-                          {order.email}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-900 truncate">
-                          {order.product}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-900 text-center">
-                          {order.quantity}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-900 text-right font-medium">
-                          ${parseFloat(order.unitPrice).toFixed(2)}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-900 text-right font-semibold">
-                          ${parseFloat(order.total).toFixed(2)}
-                        </td>
-                        <td className="px-6 py-4 text-center">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            order.status === 'Completed' ? 'bg-green-100 text-green-800' :
-                            order.status === 'In progress' ? 'bg-blue-100 text-blue-800' :
-                            'bg-orange-100 text-orange-800'
-                          }`}>
-                            {order.status}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-500 truncate">
-                          {order.createdBy}
-                        </td>
-                        <td className="px-6 py-4 text-center">
-                          <div className="relative inline-block">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setContextMenu(contextMenu === order.id ? null : order.id);
-                              }}
-                              className="inline-flex items-center justify-center w-8 h-8 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors duration-150"
-                            >
-                              <MoreVertical size={16} />
-                            </button>
-                            {contextMenu === order.id && (
-                              <div className="absolute right-0 top-10 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-50 py-1">
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleEdit(order);
-                                  }}
-                                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors duration-150"
-                                >
-                                  <Edit size={14} className="text-gray-400" />
-                                  Edit Order
-                                </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDelete(order);
-                                  }}
-                                  className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 transition-colors duration-150"
-                                >
-                                  <Trash2 size={14} className="text-red-500" />
-                                  Delete Order
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+      {/* Content */}
+      <div className="pb-4 md:pb-6 md:flex-1 md:overflow-hidden">
+        <div className="p-4 md:p-6 md:h-full">
+          {filteredOrders.length === 0 ? (
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 min-h-96 md:h-full flex flex-col items-center justify-center p-8">
+              <div className="text-center text-gray-500">
+                <div className="text-6xl mb-4">📦</div>
+                <p className="text-lg font-medium mb-2">No orders found</p>
+                <p className="text-sm mb-6">Start by creating your first order</p>
+                <button
+                  onClick={handleCreate}
+                  className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary/90 flex items-center gap-2 mx-auto"
+                >
+                  <Plus size={18} />
+                  New Order
+                </button>
               </div>
             </div>
-          </>
-        )}
+          ) : (
+            <>
+              {/* Mobile Card View */}
+              <div className="md:hidden space-y-4">
+                {filteredOrders.map((order) => (
+                  <div key={order.id} className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 relative">
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold text-gray-900">
+                          #{order.orderId || order.id.slice(0, 8)}
+                        </span>
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                          order.status === 'Completed' ? 'bg-green-100 text-green-800' :
+                          order.status === 'In progress' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          {order.status === 'Completed' && '🟢'}
+                          {order.status === 'In progress' && '🟡'}
+                          {order.status === 'Cancelled' && '🔴'}
+                          {order.status}
+                        </span>
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setContextMenu(contextMenu === order.id ? null : order.id);
+                        }}
+                        className="p-1 text-gray-400 hover:text-gray-600 rounded"
+                      >
+                        <MoreVertical size={16} />
+                      </button>
+                    </div>
+                    
+                    <div className="space-y-2 mb-4">
+                      <div>
+                        <span className="text-sm font-medium text-gray-600">Customer: </span>
+                        <span className="text-sm text-gray-900">
+                          {order.customerName || `${order.firstName} ${order.lastName}`}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-sm font-medium text-gray-600">Product: </span>
+                        <span className="text-sm text-gray-900">
+                          {order.product?.length > 30 ? `${order.product.substring(0, 30)}...` : order.product || 'No product'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <div>
+                          <span className="text-sm font-medium text-gray-600">Qty: </span>
+                          <span className="text-sm text-gray-900">{order.quantity}</span>
+                        </div>
+                        <div>
+                          <span className="text-sm font-medium text-gray-600">Total: </span>
+                          <span className="text-sm font-semibold text-gray-900">
+                            ${parseFloat(order.total).toFixed(2)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleEdit(order)}
+                        className="flex-1 bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 flex items-center justify-center gap-2"
+                      >
+                        <Eye size={14} />
+                        View
+                      </button>
+                      <button
+                        onClick={() => handleEdit(order)}
+                        className="flex-1 bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-blue-200 flex items-center justify-center gap-2"
+                      >
+                        <Edit size={14} />
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(order)}
+                        className="flex-1 bg-red-100 text-red-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-red-200 flex items-center justify-center gap-2"
+                      >
+                        <Trash2 size={14} />
+                        Delete
+                      </button>
+                    </div>
+                    
+                    {contextMenu === order.id && (
+                      <div className="absolute right-4 top-16 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-50 py-1">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEdit(order);
+                          }}
+                          className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3"
+                        >
+                          <Eye size={14} className="text-gray-400" />
+                          View Details
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEdit(order);
+                          }}
+                          className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3"
+                        >
+                          <Edit size={14} className="text-gray-400" />
+                          Edit Order
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(order);
+                          }}
+                          className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-3"
+                        >
+                          <Trash2 size={14} className="text-red-500" />
+                          Delete Order
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+              
+              {/* Desktop Table View */}
+              <div className="hidden md:block bg-white rounded-lg shadow-sm border border-gray-100 h-full">
+                <div className="h-full overflow-auto">
+                  <table className="w-full table-fixed">
+                    <thead className="bg-gray-50 sticky top-0 z-10">
+                      <tr className="border-b border-gray-200">
+                        <th className="w-24 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Order ID</th>
+                        <th className="w-40 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Customer</th>
+                        <th className="w-48 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
+                        <th className="w-40 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Product</th>
+                        <th className="w-20 px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Qty</th>
+                        <th className="w-24 px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Unit Price</th>
+                        <th className="w-24 px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Total</th>
+                        <th className="w-28 px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                        <th className="w-32 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Created By</th>
+                        <th className="w-20 px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-100">
+                      {filteredOrders.map((order) => (
+                        <tr key={order.id} className="hover:bg-gray-50 transition-colors duration-150">
+                          <td className="px-6 py-4 text-sm font-medium text-gray-900 truncate">
+                            #{order.orderId || order.id.slice(0, 8)}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-900 truncate">
+                            {order.customerName || `${order.firstName} ${order.lastName}`}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-500 truncate">
+                            {order.email}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-900 truncate">
+                            {order.product}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-900 text-center">
+                            {order.quantity}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-900 text-right font-medium">
+                            ${parseFloat(order.unitPrice).toFixed(2)}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-900 text-right font-semibold">
+                            ${parseFloat(order.total).toFixed(2)}
+                          </td>
+                          <td className="px-6 py-4 text-center">
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              order.status === 'Completed' ? 'bg-green-100 text-green-800' :
+                              order.status === 'In progress' ? 'bg-blue-100 text-blue-800' :
+                              'bg-orange-100 text-orange-800'
+                            }`}>
+                              {order.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-500 truncate">
+                            {order.createdBy}
+                          </td>
+                          <td className="px-6 py-4 text-center">
+                            <div className="relative inline-block">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setContextMenu(contextMenu === order.id ? null : order.id);
+                                }}
+                                className="inline-flex items-center justify-center w-8 h-8 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors duration-150"
+                              >
+                                <MoreVertical size={16} />
+                              </button>
+                              {contextMenu === order.id && (
+                                <div className="absolute right-0 top-10 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-50 py-1">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleEdit(order);
+                                    }}
+                                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors duration-150"
+                                  >
+                                    <Edit size={14} className="text-gray-400" />
+                                    Edit Order
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDelete(order);
+                                    }}
+                                    className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 transition-colors duration-150"
+                                  >
+                                    <Trash2 size={14} className="text-red-500" />
+                                    Delete Order
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       </div>
-
-
 
       {showModal && (
         <OrderModal

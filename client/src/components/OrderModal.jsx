@@ -33,7 +33,7 @@ const OrderModal = ({ order, onSave, onClose }) => {
     if (order) {
       setFormData({
         ...order,
-        total: order.quantity * order.unitPrice,
+        total: (order.quantity || 1) * (order.unitPrice || 0),
       });
     }
   }, [order]);
@@ -47,11 +47,11 @@ const OrderModal = ({ order, onSave, onClose }) => {
       }
       
       if (field === 'streetAddress' || field === 'city' || field === 'state' || field === 'postalCode') {
-        updated.address = `${updated.streetAddress}, ${updated.city}, ${updated.state} ${updated.postalCode}`.trim();
+        updated.address = `${updated.streetAddress || ''}, ${updated.city || ''}, ${updated.state || ''} ${updated.postalCode || ''}`.trim();
       }
       
       if (field === 'quantity' || field === 'unitPrice') {
-        updated.total = parseFloat((updated.quantity * updated.unitPrice).toFixed(2));
+        updated.total = parseFloat(((updated.quantity || 1) * (updated.unitPrice || 0)).toFixed(2));
       }
       
       return updated;
@@ -84,9 +84,9 @@ const OrderModal = ({ order, onSave, onClose }) => {
           ...formData,
           customerId: formData.customerId || `CUST${Date.now()}`,
           orderId: formData.orderId || `ORD${Date.now()}`,
-          customerName: `${formData.firstName} ${formData.lastName}`,
-          address: `${formData.streetAddress}, ${formData.city}, ${formData.state} ${formData.postalCode}`,
-          total: parseFloat((formData.quantity * formData.unitPrice).toFixed(2)),
+          customerName: `${formData.firstName || ''} ${formData.lastName || ''}`.trim(),
+          address: `${formData.streetAddress || ''}, ${formData.city || ''}, ${formData.state || ''} ${formData.postalCode || ''}`.trim(),
+          total: parseFloat(((formData.quantity || 1) * (formData.unitPrice || 0)).toFixed(2)),
           orderDate: formData.orderDate || new Date().toISOString(),
         };
         await onSave(orderData);
@@ -332,7 +332,7 @@ const OrderModal = ({ order, onSave, onClose }) => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Total</label>
                 <input
                   type="text"
-                  value={`$${(formData.quantity * formData.unitPrice).toFixed(2)}`}
+                  value={`$${((formData.quantity || 1) * (formData.unitPrice || 0)).toFixed(2)}`}
                   readOnly
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600"
                 />

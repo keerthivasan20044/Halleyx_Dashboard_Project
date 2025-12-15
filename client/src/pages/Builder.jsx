@@ -232,7 +232,7 @@ const Builder = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col min-h-screen md:h-screen">
       <header className="bg-white border-b border-gray-200 px-4 md:px-8 py-4 flex-shrink-0">
         <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
           <div className="flex items-center gap-3">
@@ -276,7 +276,7 @@ const Builder = () => {
         </div>
       </header>
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex md:overflow-hidden">
         {/* Desktop Sidebar - Always visible */}
         <div className="hidden lg:block">
           <WidgetLibrary onAddWidget={handleAddWidget} />

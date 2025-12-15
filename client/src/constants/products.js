@@ -19,6 +19,7 @@ export const STATUSES = [
   'Pending',
   'In progress',
   'Completed',
+  'Cancelled',
 ];
 
 export const CREATORS = [
