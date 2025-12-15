@@ -234,42 +234,43 @@ const Builder = () => {
   return (
     <div className="flex flex-col min-h-screen md:h-screen">
       <header className="bg-white border-b border-gray-200 px-4 md:px-8 py-4 flex-shrink-0">
-        <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
+        <div className="flex flex-col gap-4">
           <div className="flex items-center gap-3">
             <button
               onClick={handleBack}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
               aria-label="Back to dashboard"
             >
               <ArrowLeft size={20} className="text-gray-700" />
             </button>
-            <div>
-              <h2 className="text-lg md:text-xl font-bold text-gray-900">Configure Dashboard</h2>
-              <p className="text-xs md:text-sm text-gray-500">Configure your dashboard to start viewing analytics</p>
+            <div className="min-w-0 flex-1">
+              <h2 className="text-lg md:text-xl font-bold text-gray-900 truncate">Configure Dashboard</h2>
+              <p className="text-xs md:text-sm text-gray-500 hidden md:block">Configure your dashboard to start viewing analytics</p>
             </div>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+          <div className="flex flex-col gap-3">
             <DateFilter value={dateFilter} onChange={handleDateFilterChange} />
-            <div className="flex gap-2 md:gap-3">
+            <div className="flex gap-2">
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="lg:hidden flex-1 p-2 hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm font-medium"
               >
-                <Menu size={20} />
+                <Menu size={18} />
+                <span>Widgets</span>
               </button>
               <button
                 onClick={() => navigate('/')}
-                className="px-3 md:px-4 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm md:text-base"
+                className="flex-1 md:flex-none px-4 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm"
               >
-                <X size={18} />
-                <span className="hidden sm:inline">Cancel</span>
+                <X size={16} />
+                <span>Cancel</span>
               </button>
               <button
                 onClick={handleSave}
-                className="px-3 md:px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors flex items-center gap-2 text-sm md:text-base shadow-sm"
+                className="flex-1 md:flex-none px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 text-sm shadow-sm"
               >
-                <Save size={18} />
-                <span className="hidden sm:inline">Save</span>
+                <Save size={16} />
+                <span>Save</span>
               </button>
             </div>
           </div>

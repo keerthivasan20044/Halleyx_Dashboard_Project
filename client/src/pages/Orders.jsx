@@ -310,7 +310,7 @@ const Orders = () => {
                     </div>
                     
                     {contextMenu === order.id && (
-                      <div className="absolute right-4 top-16 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-50 py-1">
+                      <div className="absolute right-2 top-12 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50 py-1">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();

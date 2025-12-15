@@ -120,7 +120,7 @@ const OrderModal = ({ order, onSave, onClose }) => {
           {/* Customer Information */}
           <div className="mb-6">
             <h4 className="text-lg font-semibold text-gray-900 mb-4">Customer Information</h4>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   First Name *
@@ -187,7 +187,7 @@ const OrderModal = ({ order, onSave, onClose }) => {
                   <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
                 )}
               </div>
-              <div className="col-span-2">
+              <div className="col-span-1 md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Street Address *
                 </label>
@@ -269,7 +269,7 @@ const OrderModal = ({ order, onSave, onClose }) => {
           {/* Order Information */}
           <div>
             <h4 className="text-lg font-semibold text-gray-900 mb-4">Order Information</h4>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Product *</label>
                 <select
@@ -372,19 +372,19 @@ const OrderModal = ({ order, onSave, onClose }) => {
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-gray-200">
+          <div className="flex flex-col md:flex-row justify-end gap-3 mt-6 pt-6 border-t border-gray-200">
             <button
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="px-4 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full md:w-auto px-4 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed order-2 md:order-1"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="w-full md:w-auto px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 order-1 md:order-2"
             >
               {loading && (
                 <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">

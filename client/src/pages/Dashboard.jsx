@@ -171,35 +171,35 @@ const Dashboard = () => {
       {/* Header Section */}
       <div className="bg-white border-b border-gray-200 px-6 py-6">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-6">
+          <div className="flex flex-col gap-4 mb-6">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-1">Customer Orders</h1>
-              <p className="text-gray-600">View and manage customer orders and details</p>
+              <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-1">Customer Orders</h1>
+              <p className="text-sm md:text-base text-gray-600">View and manage customer orders and details</p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <DateFilter value={dateFilter} onChange={handleDateFilterChange} />
               <button
                 onClick={() => navigate('/builder')}
-                className="bg-primary text-white px-3 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors inline-flex items-center gap-2 text-sm"
+                className="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors inline-flex items-center justify-center gap-2 text-sm w-full sm:w-auto"
               >
                 <Settings size={16} />
-                <span className="hidden sm:inline">Configure</span>
+                <span>Configure</span>
               </button>
             </div>
           </div>
           
           {/* Tabs */}
-          <div className="flex space-x-8">
-            <button className="pb-3 border-b-2 border-primary text-primary font-medium flex items-center gap-2">
+          <div className="flex border-b border-gray-200">
+            <button className="flex-1 md:flex-none pb-3 border-b-2 border-primary text-primary font-medium flex items-center justify-center md:justify-start gap-2 text-sm md:text-base">
               <LayoutDashboard size={18} />
-              Dashboard
+              <span>Dashboard</span>
             </button>
             <button 
               onClick={() => navigate('/orders')}
-              className="pb-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium flex items-center gap-2"
+              className="flex-1 md:flex-none pb-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium flex items-center justify-center md:justify-start gap-2 text-sm md:text-base ml-0 md:ml-8"
             >
               <Table size={18} />
-              Table
+              <span>Table</span>
             </button>
           </div>
         </div>
