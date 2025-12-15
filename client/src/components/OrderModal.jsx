@@ -174,6 +174,8 @@ const OrderModal = ({ order, onSave, onClose }) => {
                 </label>
                 <input
                   type="tel"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   value={formData.phone}
                   onChange={(e) => handleChange('phone', e.target.value)}
                   className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
@@ -236,6 +238,8 @@ const OrderModal = ({ order, onSave, onClose }) => {
                 </label>
                 <input
                   type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   value={formData.postalCode}
                   onChange={(e) => handleChange('postalCode', e.target.value)}
                   className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
@@ -286,7 +290,9 @@ const OrderModal = ({ order, onSave, onClose }) => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Quantity *</label>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   min="1"
                   value={formData.quantity}
                   onChange={(e) => handleChange('quantity', parseInt(e.target.value) || 1)}
@@ -303,7 +309,9 @@ const OrderModal = ({ order, onSave, onClose }) => {
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="decimal"
+                    pattern="[0-9]*\.?[0-9]*"
                     min="0"
                     step="0.01"
                     value={formData.unitPrice}
