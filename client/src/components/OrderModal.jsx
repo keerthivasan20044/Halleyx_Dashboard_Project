@@ -65,37 +65,65 @@ const OrderModal = ({ order, onSave, onClose }) => {
   const validate = () => {
     const newErrors = {};
     const required = ['firstName', 'lastName', 'email', 'phone', 'streetAddress', 'city', 'state', 'postalCode', 'product', 'createdBy'];
+    
     required.forEach(field => {
-      if (!formData[field] || (typeof formData[field] === 'string' && !formData[field].trim())) {
-        newErrors[field] = 'Please fill the field';
+      const value = formData[field];
+      if (!value || (typeof value === 'string' && !value.trim())) {
+        newErrors[field] = 'This field is required';
       }
     });
-    if (formData.quantity < 1) newErrors.quantity = 'Quantity must be at least 1';
-    if (formData.unitPrice <= 0) newErrors.unitPrice = 'Unit price must be greater than 0';
+    
+    // Email validation
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+    
+    // Quantity validation
+    const quantity = Number(formData.quantity);
+    if (isNaN(quantity) || quantity < 1) {
+      newErrors.quantity = 'Quantity must be at least 1';
+    }
+    
+    // Unit price validation
+    const unitPrice = Number(formData.unitPrice);
+    if (isNaN(unitPrice) || unitPrice <= 0) {
+      newErrors.unitPrice = 'Unit price must be greater than 0';
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validate()) {
-      setLoading(true);
-      try {
-        const orderData = {
-          ...formData,
-          customerId: formData.customerId || `CUST${Date.now()}`,
-          orderId: formData.orderId || `ORD${Date.now()}`,
-          customerName: `${formData.firstName || ''} ${formData.lastName || ''}`.trim(),
-          address: `${formData.streetAddress || ''}, ${formData.city || ''}, ${formData.state || ''} ${formData.postalCode || ''}`.trim(),
-          total: parseFloat(((formData.quantity || 1) * (formData.unitPrice || 0)).toFixed(2)),
-          orderDate: formData.orderDate || new Date().toISOString(),
-        };
-        await onSave(orderData);
-      } catch (error) {
-        console.error('Error saving order:', error);
-      } finally {
-        setLoading(false);
-      }
+    
+    if (!validate()) {
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const quantity = Number(formData.quantity) || 1;
+      const unitPrice = Number(formData.unitPrice) || 0;
+      
+      const orderData = {
+        ...formData,
+        customerId: formData.customerId || `CUST${Date.now()}`,
+        orderId: formData.orderId || `ORD${Date.now()}`,
+        customerName: `${formData.firstName || ''} ${formData.lastName || ''}`.trim(),
+        address: `${formData.streetAddress || ''}, ${formData.city || ''}, ${formData.state || ''} ${formData.postalCode || ''}`.trim(),
+        quantity,
+        unitPrice,
+        total: parseFloat((quantity * unitPrice).toFixed(2)),
+        orderDate: formData.orderDate || new Date().toISOString(),
+      };
+      
+      await onSave(orderData);
+    } catch (error) {
+      console.error('Error saving order:', error);
+      alert('Failed to save order. Please check your input and try again.');
+    } finally {
+      setLoading(false);
     }
   };
 

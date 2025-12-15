@@ -3,29 +3,79 @@ import axios from 'axios'
 const LS_ORDERS = 'orders'
 const LS_WIDGETS = 'widgets'
 
+// Create secure axios instance
+const createSecureAxios = () => {
+  const instance = axios.create({
+    timeout: 10000,
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest',
+    },
+    withCredentials: true,
+  })
+
+  // Add CSRF token to requests
+  instance.interceptors.request.use((config) => {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+    if (csrfToken) {
+      config.headers['X-CSRF-Token'] = csrfToken
+    }
+    return config
+  })
+
+  return instance
+}
+
 // --- Simple pub/sub to broadcast data changes ---
 const ordersSubscribers = new Set()
 const widgetsSubscribers = new Set()
 
 export function subscribeOrders(cb) {
+  if (typeof cb !== 'function') {
+    console.error('Invalid callback provided to subscribeOrders')
+    return () => {}
+  }
   ordersSubscribers.add(cb)
   return () => ordersSubscribers.delete(cb)
 }
+
 export function subscribeWidgets(cb) {
+  if (typeof cb !== 'function') {
+    console.error('Invalid callback provided to subscribeWidgets')
+    return () => {}
+  }
   widgetsSubscribers.add(cb)
   return () => widgetsSubscribers.delete(cb)
 }
+
 function notifyOrdersChanged() {
-  const data = getOrdersSafe()
-  ordersSubscribers.forEach(cb => {
-    try { cb(data) } catch {}
-  })
+  try {
+    const data = getOrdersSafe()
+    ordersSubscribers.forEach(cb => {
+      try { 
+        cb(data) 
+      } catch (error) {
+        console.error('Orders subscriber error:', error)
+      }
+    })
+  } catch (error) {
+    console.error('Failed to notify orders changed:', error)
+  }
 }
+
 function notifyWidgetsChanged() {
-  const data = getWidgetsSafe()
-  widgetsSubscribers.forEach(cb => {
-    try { cb(data) } catch {}
-  })
+  try {
+    const data = getWidgetsSafe()
+    widgetsSubscribers.forEach(cb => {
+      try { 
+        cb(data) 
+      } catch (error) {
+        console.error('Widgets subscriber error:', error)
+      }
+    })
+  } catch (error) {
+    console.error('Failed to notify widgets changed:', error)
+  }
 }
 
 // --- Seed with demo orders for offline mode ---
@@ -126,34 +176,67 @@ seed()
 
 // --- Accessors ---
 export function getOrdersSafe() {
-  return JSON.parse(localStorage.getItem(LS_ORDERS) || '[]')
+  try {
+    const data = localStorage.getItem(LS_ORDERS)
+    if (!data) return []
+    const parsed = JSON.parse(data)
+    return Array.isArray(parsed) ? parsed : []
+  } catch (error) {
+    console.error('Failed to get orders from storage:', error)
+    return []
+  }
 }
+
 export function getWidgetsSafe() {
-  return JSON.parse(localStorage.getItem(LS_WIDGETS) || '[]')
+  try {
+    const data = localStorage.getItem(LS_WIDGETS)
+    if (!data) return []
+    const parsed = JSON.parse(data)
+    return Array.isArray(parsed) ? parsed : []
+  } catch (error) {
+    console.error('Failed to get widgets from storage:', error)
+    return []
+  }
 }
 
 // --- Widgets API with fallback ---
 export async function fetchWidgets() {
   try {
-    const { data } = await axios.get('/api/dashboard')
-    localStorage.setItem(LS_WIDGETS, JSON.stringify(data || []))
+    const secureAxios = createSecureAxios()
+    const { data } = await secureAxios.get('/api/dashboard')
+    
+    const validData = Array.isArray(data) ? data : []
+    localStorage.setItem(LS_WIDGETS, JSON.stringify(validData))
     notifyWidgetsChanged()
-    return data || []
-  } catch {
+    return validData
+  } catch (error) {
+    console.warn('Failed to fetch widgets from API, using local data:', error.message)
     const local = getWidgetsSafe()
     notifyWidgetsChanged()
     return local
   }
 }
+
 export async function saveWidgets(widgets) {
   try {
-    const { data } = await axios.post('/api/dashboard', widgets)
-    localStorage.setItem(LS_WIDGETS, JSON.stringify(data || widgets))
+    if (!Array.isArray(widgets)) {
+      throw new Error('Invalid widgets data: must be an array')
+    }
+    
+    const secureAxios = createSecureAxios()
+    const { data } = await secureAxios.post('/api/dashboard', widgets)
+    
+    const validData = Array.isArray(data) ? data : widgets
+    localStorage.setItem(LS_WIDGETS, JSON.stringify(validData))
     notifyWidgetsChanged()
-    return data || widgets
-  } catch {
-    localStorage.setItem(LS_WIDGETS, JSON.stringify(widgets))
-    notifyWidgetsChanged()
+    return validData
+  } catch (error) {
+    console.warn('Failed to save widgets to API, saving locally:', error.message)
+    
+    if (Array.isArray(widgets)) {
+      localStorage.setItem(LS_WIDGETS, JSON.stringify(widgets))
+      notifyWidgetsChanged()
+    }
     return widgets
   }
 }
@@ -161,48 +244,107 @@ export async function saveWidgets(widgets) {
 // --- Orders API with fallback ---
 export async function fetchOrders() {
   try {
-    const { data } = await axios.get('/api/orders')
-    localStorage.setItem(LS_ORDERS, JSON.stringify(data))
+    const secureAxios = createSecureAxios()
+    const { data } = await secureAxios.get('/api/orders')
+    
+    const validData = Array.isArray(data) ? data : []
+    localStorage.setItem(LS_ORDERS, JSON.stringify(validData))
     notifyOrdersChanged()
-    return data
-  } catch {
+    return validData
+  } catch (error) {
+    console.warn('Failed to fetch orders from API, using local data:', error.message)
     const local = getOrdersSafe()
     notifyOrdersChanged()
     return local
   }
 }
+
 export async function saveOrder(order) {
   try {
+    if (!order || typeof order !== 'object') {
+      throw new Error('Invalid order data')
+    }
+    
+    const secureAxios = createSecureAxios()
+    
     if (order._id) {
-      await axios.put(`/api/orders/${order._id}`, order)
+      // Validate ID format
+      if (typeof order._id !== 'string' || order._id.length === 0) {
+        throw new Error('Invalid order ID')
+      }
+      await secureAxios.put(`/api/orders/${encodeURIComponent(order._id)}`, order)
     } else {
-      await axios.post('/api/orders', order)
+      await secureAxios.post('/api/orders', order)
     }
     return await fetchOrders()
-  } catch {
+  } catch (error) {
+    console.warn('Failed to save order to API, saving locally:', error.message)
+    
     // offline fallback mutate locally
     const cur = getOrdersSafe()
     if (order._id) {
       const idx = cur.findIndex(x => x._id === order._id)
-      if (idx !== -1) cur[idx] = { ...cur[idx], ...order, totalAmount: (order.quantity || 0) * (order.unitPrice || 0) }
+      if (idx !== -1) {
+        cur[idx] = { 
+          ...cur[idx], 
+          ...order, 
+          totalAmount: calculateSafeTotal(order.quantity, order.unitPrice)
+        }
+      }
     } else {
-      const id = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : `mock-${Date.now()}`
+      const id = generateSafeId()
       const nextOrderNum = cur.length + 1
-      cur.push({ ...order, _id: id, orderId: `ORD - ${String(nextOrderNum).padStart(4,'0')}`, totalAmount: (order.quantity || 0) * (order.unitPrice || 0), createdAt: new Date().toISOString() })
+      cur.push({ 
+        ...order, 
+        _id: id, 
+        orderId: `ORD - ${String(nextOrderNum).padStart(4,'0')}`, 
+        totalAmount: calculateSafeTotal(order.quantity, order.unitPrice), 
+        createdAt: new Date().toISOString() 
+      })
     }
     localStorage.setItem(LS_ORDERS, JSON.stringify(cur))
     notifyOrdersChanged()
     return cur
   }
 }
+
 export async function deleteOrder(id) {
   try {
-    await axios.delete(`/api/orders/${id}`)
+    if (!id || typeof id !== 'string') {
+      throw new Error('Invalid order ID')
+    }
+    
+    const secureAxios = createSecureAxios()
+    await secureAxios.delete(`/api/orders/${encodeURIComponent(id)}`)
     return await fetchOrders()
-  } catch {
+  } catch (error) {
+    console.warn('Failed to delete order from API, deleting locally:', error.message)
+    
     const cur = getOrdersSafe().filter(o => o._id !== id)
     localStorage.setItem(LS_ORDERS, JSON.stringify(cur))
     notifyOrdersChanged()
     return cur
+  }
+}
+
+// Helper functions
+function calculateSafeTotal(quantity, unitPrice) {
+  try {
+    const qty = parseFloat(quantity) || 0
+    const price = parseFloat(unitPrice) || 0
+    return parseFloat((qty * price).toFixed(2))
+  } catch {
+    return 0
+  }
+}
+
+function generateSafeId() {
+  try {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      return crypto.randomUUID()
+    }
+    return `mock-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+  } catch {
+    return `fallback-${Date.now()}`
   }
 }

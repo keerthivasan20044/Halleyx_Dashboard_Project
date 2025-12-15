@@ -73,10 +73,14 @@ const Orders = () => {
   const loadOrders = async () => {
     try {
       const data = await ordersAPI.getAll();
-      setOrders(data);
-      setFilteredOrders(data);
+      const validData = Array.isArray(data) ? data : [];
+      setOrders(validData);
+      setFilteredOrders(validData);
     } catch (error) {
       console.error('Error loading orders:', error);
+      setOrders([]);
+      setFilteredOrders([]);
+      showToast('Failed to load orders. Please refresh the page.', 'error');
     } finally {
       setLoading(false);
     }
@@ -110,23 +114,35 @@ const Orders = () => {
   };
 
   const confirmDelete = async () => {
-    if (orderToDelete) {
-      try {
-        await ordersAPI.delete(orderToDelete.id);
-        showToast('Order deleted successfully', 'success');
-        await loadOrders();
-      } catch (error) {
-        showToast('Failed to delete order', 'error');
-        console.error('Error deleting order:', error);
-      }
+    if (!orderToDelete?.id) {
+      showToast('Invalid order selected for deletion', 'error');
+      setShowConfirmModal(false);
+      setOrderToDelete(null);
+      return;
     }
-    setShowConfirmModal(false);
-    setOrderToDelete(null);
+    
+    try {
+      await ordersAPI.delete(orderToDelete.id);
+      showToast('Order deleted successfully', 'success');
+      await loadOrders();
+    } catch (error) {
+      const errorMessage = error?.message || 'Failed to delete order';
+      showToast(errorMessage, 'error');
+      console.error('Error deleting order:', error);
+    } finally {
+      setShowConfirmModal(false);
+      setOrderToDelete(null);
+    }
   };
 
   const handleSave = async (orderData) => {
+    if (!orderData) {
+      showToast('Invalid order data', 'error');
+      return;
+    }
+    
     try {
-      if (editingOrder) {
+      if (editingOrder?.id) {
         await ordersAPI.update(editingOrder.id, orderData);
         showToast('Order updated successfully', 'success');
       } else {
@@ -137,7 +153,8 @@ const Orders = () => {
       setEditingOrder(null);
       await loadOrders();
     } catch (error) {
-      showToast('Failed to save order', 'error');
+      const errorMessage = error?.message || 'Failed to save order';
+      showToast(errorMessage, 'error');
       console.error('Error saving order:', error);
     }
   };
@@ -173,7 +190,7 @@ const Orders = () => {
               <div className="flex-1 space-y-3">
                 <DateFilter value={dateFilter} onChange={setDateFilter} />
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} className="sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 sm:w-4 sm:h-4 lg:w-5 lg:h-5" size={16} />
                   <input
                     type="text"
                     placeholder="Search orders..."

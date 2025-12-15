@@ -3,43 +3,101 @@ import { mockDataService } from './mockData';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
+// Validate API URL
+if (!API_URL || typeof API_URL !== 'string') {
+  throw new Error('Invalid API URL configuration');
+}
+
 const api = axios.create({
   baseURL: API_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
+    'X-Requested-With': 'XMLHttpRequest',
   },
+  withCredentials: true,
 });
 
-// Request interceptor for debugging
+// Request interceptor with security headers
 api.interceptors.request.use(
   (config) => {
-    console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`);
+    // Add CSRF token if available
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    if (csrfToken) {
+      config.headers['X-CSRF-Token'] = csrfToken;
+    }
+    
+    // Validate URL to prevent SSRF
+    if (config.url && !config.url.startsWith('/api/')) {
+      console.warn('Potentially unsafe URL detected:', config.url);
+    }
+    
+    if (import.meta.env.DEV) {
+      console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`);
+    }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    console.error('Request interceptor error:', error);
+    return Promise.reject(error);
+  }
 );
 
 // Response interceptor for error handling
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Validate response structure
+    if (!response || typeof response !== 'object') {
+      throw new Error('Invalid response format');
+    }
+    return response;
+  },
   (error) => {
+    // Enhanced error handling
     if (error.code === 'ECONNABORTED') {
       console.warn('Request timeout - falling back to mock data');
     } else if (error.response?.status >= 500) {
       console.warn('Server error - falling back to mock data');
+    } else if (error.response?.status === 403) {
+      console.error('CSRF token validation failed');
+    } else if (error.response?.status === 401) {
+      console.error('Authentication required');
     }
-    return Promise.reject(error);
+    
+    // Sanitize error message
+    const sanitizedError = {
+      ...error,
+      message: error.message || 'An error occurred',
+      response: error.response ? {
+        status: error.response.status,
+        statusText: error.response.statusText,
+        data: error.response.data
+      } : null
+    };
+    
+    return Promise.reject(sanitizedError);
   }
 );
 
 const withFallback = async (apiCall, fallbackCall, operation = 'API call') => {
   try {
     const response = await apiCall();
+    
+    // Validate response data
+    if (!response || typeof response.data === 'undefined') {
+      throw new Error('Invalid API response structure');
+    }
+    
     return response.data;
   } catch (error) {
     console.warn(`${operation} failed, using fallback:`, error.message);
-    return fallbackCall();
+    
+    try {
+      return fallbackCall();
+    } catch (fallbackError) {
+      console.error(`Fallback also failed for ${operation}:`, fallbackError.message);
+      throw new Error(`Both API and fallback failed for ${operation}`);
+    }
   }
 };
 
@@ -96,33 +154,54 @@ export const dashboardAPI = {
 
   addWidget: async (widget) => {
     try {
+      // Validate widget data
+      if (!widget || typeof widget !== 'object') {
+        throw new Error('Invalid widget data');
+      }
+      
       const response = await api.post('/api/dashboard/widget', widget);
+      
+      if (!response.data) {
+        throw new Error('Invalid response from server');
+      }
+      
       return response.data;
     } catch (error) {
-      console.warn('API call failed:', error.message);
-      throw error;
+      console.error('Add widget failed:', error.message);
+      throw new Error(`Failed to add widget: ${error.message}`);
     }
   },
 
   deleteWidget: async (widgetId) => {
     try {
-      const response = await api.delete(`/api/dashboard/widget/${widgetId}`);
+      // Validate widget ID
+      if (!widgetId || typeof widgetId !== 'string') {
+        throw new Error('Invalid widget ID');
+      }
+      
+      const response = await api.delete(`/api/dashboard/widget/${encodeURIComponent(widgetId)}`);
       return response.data;
     } catch (error) {
-      console.warn('API call failed:', error.message);
-      throw error;
+      console.error('Delete widget failed:', error.message);
+      throw new Error(`Failed to delete widget: ${error.message}`);
     }
   },
 
   getAnalytics: async (dateFilter) => {
     try {
+      // Validate date filter
+      const validFilters = ['all', 'today', 'week', 'month', 'year'];
+      if (dateFilter && !validFilters.includes(dateFilter)) {
+        throw new Error('Invalid date filter');
+      }
+      
       const response = await api.get('/api/dashboard/analytics', {
-        params: { dateFilter }
+        params: { dateFilter: dateFilter || 'all' }
       });
       return response.data;
     } catch (error) {
-      console.warn('API call failed:', error.message);
-      throw error;
+      console.error('Get analytics failed:', error.message);
+      throw new Error(`Failed to get analytics: ${error.message}`);
     }
   },
 };

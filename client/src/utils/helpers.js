@@ -1,32 +1,112 @@
 import { REGEX_PATTERNS, BREAKPOINTS } from './constants'
 
 // Validation Helpers
-export const validateEmail = (email) => REGEX_PATTERNS.EMAIL.test(email)
-export const validatePhone = (phone) => REGEX_PATTERNS.PHONE.test(phone)
-export const validateZipCode = (zip) => REGEX_PATTERNS.ZIP_CODE.test(zip)
-export const validateCurrency = (value) => REGEX_PATTERNS.CURRENCY.test(String(value))
+export const validateEmail = (email) => {
+  try {
+    return email && typeof email === 'string' && REGEX_PATTERNS.EMAIL.test(email)
+  } catch (error) {
+    console.error('Email validation error:', error)
+    return false
+  }
+}
+
+export const validatePhone = (phone) => {
+  try {
+    return phone && typeof phone === 'string' && REGEX_PATTERNS.PHONE.test(phone)
+  } catch (error) {
+    console.error('Phone validation error:', error)
+    return false
+  }
+}
+
+export const validateZipCode = (zip) => {
+  try {
+    return zip && REGEX_PATTERNS.ZIP_CODE.test(String(zip))
+  } catch (error) {
+    console.error('Zip code validation error:', error)
+    return false
+  }
+}
+
+export const validateCurrency = (value) => {
+  try {
+    return value !== null && value !== undefined && REGEX_PATTERNS.CURRENCY.test(String(value))
+  } catch (error) {
+    console.error('Currency validation error:', error)
+    return false
+  }
+}
 
 // String Helpers
-export const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1)
-export const truncate = (str, length = 50) => str.length > length ? str.substring(0, length) + '...' : str
-export const formatName = (firstName, lastName) => `${firstName} ${lastName}`.trim()
+export const capitalize = (str) => {
+  try {
+    if (!str || typeof str !== 'string') return ''
+    return str.charAt(0).toUpperCase() + str.slice(1)
+  } catch (error) {
+    console.error('Capitalize error:', error)
+    return str || ''
+  }
+}
+
+export const truncate = (str, length = 50) => {
+  try {
+    if (!str || typeof str !== 'string') return ''
+    return str.length > length ? str.substring(0, length) + '...' : str
+  } catch (error) {
+    console.error('Truncate error:', error)
+    return str || ''
+  }
+}
+
+export const formatName = (firstName, lastName) => {
+  try {
+    const first = firstName && typeof firstName === 'string' ? firstName : ''
+    const last = lastName && typeof lastName === 'string' ? lastName : ''
+    return `${first} ${last}`.trim()
+  } catch (error) {
+    console.error('Format name error:', error)
+    return ''
+  }
+}
 
 // Number Helpers
 export const formatCurrency = (value, decimals = 2) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-  }).format(value)
+  try {
+    const numValue = parseFloat(value)
+    if (isNaN(numValue)) return '$0.00'
+    
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    }).format(numValue)
+  } catch (error) {
+    console.error('Format currency error:', error)
+    return '$0.00'
+  }
 }
 
 export const formatNumber = (value, decimals = 2) => {
-  return parseFloat(value).toFixed(decimals)
+  try {
+    const numValue = parseFloat(value)
+    if (isNaN(numValue)) return '0'
+    return numValue.toFixed(decimals)
+  } catch (error) {
+    console.error('Format number error:', error)
+    return '0'
+  }
 }
 
 export const formatPercentage = (value) => {
-  return `${(value * 100).toFixed(1)}%`
+  try {
+    const numValue = parseFloat(value)
+    if (isNaN(numValue)) return '0.0%'
+    return `${(numValue * 100).toFixed(1)}%`
+  } catch (error) {
+    console.error('Format percentage error:', error)
+    return '0.0%'
+  }
 }
 
 // Date Helpers
@@ -87,9 +167,21 @@ export const paginateArray = (arr, page = 1, pageSize = 10) => {
 
 // Object Helpers
 export const omit = (obj, keys) => {
-  const result = { ...obj }
-  keys.forEach(key => delete result[key])
-  return result
+  try {
+    if (!obj || typeof obj !== 'object') return {}
+    if (!Array.isArray(keys)) return { ...obj }
+    
+    const result = { ...obj }
+    keys.forEach(key => {
+      if (typeof key === 'string' && key in result) {
+        delete result[key]
+      }
+    })
+    return result
+  } catch (error) {
+    console.error('Omit error:', error)
+    return obj || {}
+  }
 }
 
 export const pick = (obj, keys) => {
@@ -104,6 +196,16 @@ export const deepClone = (obj) => JSON.parse(JSON.stringify(obj))
 // Local Storage Helpers
 export const getFromStorage = (key, defaultValue = null) => {
   try {
+    if (!key || typeof key !== 'string') {
+      console.error('Invalid storage key:', key)
+      return defaultValue
+    }
+    
+    if (typeof localStorage === 'undefined') {
+      console.warn('localStorage not available')
+      return defaultValue
+    }
+    
     const item = localStorage.getItem(key)
     return item ? JSON.parse(item) : defaultValue
   } catch (error) {
@@ -114,6 +216,16 @@ export const getFromStorage = (key, defaultValue = null) => {
 
 export const setToStorage = (key, value) => {
   try {
+    if (!key || typeof key !== 'string') {
+      console.error('Invalid storage key:', key)
+      return false
+    }
+    
+    if (typeof localStorage === 'undefined') {
+      console.warn('localStorage not available')
+      return false
+    }
+    
     localStorage.setItem(key, JSON.stringify(value))
     return true
   } catch (error) {
@@ -124,6 +236,16 @@ export const setToStorage = (key, value) => {
 
 export const removeFromStorage = (key) => {
   try {
+    if (!key || typeof key !== 'string') {
+      console.error('Invalid storage key:', key)
+      return false
+    }
+    
+    if (typeof localStorage === 'undefined') {
+      console.warn('localStorage not available')
+      return false
+    }
+    
     localStorage.removeItem(key)
     return true
   } catch (error) {
@@ -166,28 +288,79 @@ export const throttle = (func, delay = 500) => {
 
 // Calculation Helpers
 export const calculateTotal = (quantity, unitPrice) => {
-  return parseFloat((quantity * unitPrice).toFixed(2))
+  try {
+    const qty = parseFloat(quantity) || 0
+    const price = parseFloat(unitPrice) || 0
+    return parseFloat((qty * price).toFixed(2))
+  } catch (error) {
+    console.error('Calculate total error:', error)
+    return 0
+  }
 }
 
 export const calculateAverage = (arr) => {
-  if (arr.length === 0) return 0
-  return arr.reduce((sum, val) => sum + val, 0) / arr.length
+  try {
+    if (!Array.isArray(arr) || arr.length === 0) return 0
+    const validNumbers = arr.filter(val => typeof val === 'number' && !isNaN(val))
+    if (validNumbers.length === 0) return 0
+    return validNumbers.reduce((sum, val) => sum + val, 0) / validNumbers.length
+  } catch (error) {
+    console.error('Calculate average error:', error)
+    return 0
+  }
 }
 
 export const calculateSum = (arr) => {
-  return arr.reduce((sum, val) => sum + val, 0)
+  try {
+    if (!Array.isArray(arr)) return 0
+    return arr.reduce((sum, val) => {
+      const num = parseFloat(val)
+      return sum + (isNaN(num) ? 0 : num)
+    }, 0)
+  } catch (error) {
+    console.error('Calculate sum error:', error)
+    return 0
+  }
 }
 
 export const calculatePercentageChange = (oldValue, newValue) => {
-  if (oldValue === 0) return 0
-  return ((newValue - oldValue) / oldValue) * 100
+  try {
+    const oldVal = parseFloat(oldValue) || 0
+    const newVal = parseFloat(newValue) || 0
+    if (oldVal === 0) return newVal === 0 ? 0 : 100
+    return ((newVal - oldVal) / oldVal) * 100
+  } catch (error) {
+    console.error('Calculate percentage change error:', error)
+    return 0
+  }
 }
 
 // Error Handling
 export const handleError = (error, defaultMessage = 'An error occurred') => {
-  if (error.response?.data?.message) return error.response.data.message
-  if (error.message) return error.message
-  return defaultMessage
+  try {
+    if (!error) return defaultMessage
+    
+    // Sanitize error messages to prevent XSS
+    const sanitizeMessage = (msg) => {
+      if (typeof msg !== 'string') return defaultMessage
+      return msg.replace(/<[^>]*>/g, '').substring(0, 200)
+    }
+    
+    if (error.response?.data?.message) {
+      return sanitizeMessage(error.response.data.message)
+    }
+    if (error.message) {
+      return sanitizeMessage(error.message)
+    }
+    if (typeof error === 'string') {
+      return sanitizeMessage(error)
+    }
+    
+    return defaultMessage
+  } catch (err) {
+    console.error('Error handling failed:', err)
+    return defaultMessage
+  }
 }
 
 // UUID Helper
@@ -209,9 +382,34 @@ export const retry = async (func, attempts = 3, delay = 1000) => {
 
 // Fetch with Timeout
 export const fetchWithTimeout = (url, options = {}, timeout = 5000) => {
-  const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), timeout)
-  
-  return fetch(url, { ...options, signal: controller.signal })
-    .finally(() => clearTimeout(timeoutId))
+  try {
+    // Validate URL to prevent SSRF
+    if (!url || typeof url !== 'string') {
+      throw new Error('Invalid URL provided')
+    }
+    
+    // Basic URL validation
+    try {
+      new URL(url, window.location.origin)
+    } catch {
+      throw new Error('Malformed URL')
+    }
+    
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), timeout)
+    
+    return fetch(url, { 
+      ...options, 
+      signal: controller.signal,
+      credentials: 'same-origin',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        ...options.headers
+      }
+    })
+      .finally(() => clearTimeout(timeoutId))
+  } catch (error) {
+    console.error('Fetch with timeout error:', error)
+    return Promise.reject(error)
+  }
 }

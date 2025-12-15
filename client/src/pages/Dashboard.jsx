@@ -45,27 +45,34 @@ const Dashboard = () => {
         chartPersistence.loadCharts(),
         ordersAPI.getAll(),
       ]);
-      setWidgets(dashboardData.widgets || []);
-      setDateFilter(dashboardData.dateFilter || 'all');
-      setOrders(ordersData);
+      setWidgets(dashboardData?.widgets || []);
+      setDateFilter(dashboardData?.dateFilter || 'all');
+      setOrders(Array.isArray(ordersData) ? ordersData : []);
     } catch (error) {
       console.error('Error loading data:', error);
+      // Set safe defaults on error
+      setWidgets([]);
+      setOrders([]);
+      setDateFilter('all');
     } finally {
       setLoading(false);
     }
   };
 
   const handleDateFilterChange = async (newFilter) => {
+    if (!newFilter) return;
     setDateFilter(newFilter);
     try {
       await chartPersistence.saveCharts(widgets, newFilter);
     } catch (error) {
       console.error('Error saving date filter:', error);
+      // Revert filter on error
+      setDateFilter(dateFilter);
     }
   };
 
   const handleDeleteWidget = async (widgetId) => {
-    if (deletingWidget) return;
+    if (deletingWidget || !widgetId) return;
     
     setDeletingWidget(widgetId);
     try {
@@ -73,31 +80,45 @@ const Dashboard = () => {
       setWidgets(prev => prev.filter(w => w.id !== widgetId));
     } catch (error) {
       console.error('Error deleting widget:', error);
+      // Show user-friendly error message
+      alert('Failed to delete widget. Please try again.');
     } finally {
       setDeletingWidget(null);
     }
   };
 
   const filterOrdersByDate = (orders) => {
-    // Return all orders for 'all' filter
+    if (!Array.isArray(orders) || orders.length === 0) {
+      return [];
+    }
+    
     if (dateFilter === 'all') {
       return orders;
     }
 
     const now = new Date();
     return orders.filter(order => {
-      const orderDate = new Date(order.orderDate || order.createdAt);
-      switch (dateFilter) {
-        case 'today':
-          return orderDate.toDateString() === now.toDateString();
-        case 'last7':
-          return (now - orderDate) / (1000 * 60 * 60 * 24) <= 7;
-        case 'last30':
-          return (now - orderDate) / (1000 * 60 * 60 * 24) <= 30;
-        case 'last90':
-          return (now - orderDate) / (1000 * 60 * 60 * 24) <= 90;
-        default:
-          return true;
+      if (!order) return false;
+      
+      try {
+        const orderDate = new Date(order.orderDate || order.createdAt);
+        if (isNaN(orderDate.getTime())) return false;
+        
+        switch (dateFilter) {
+          case 'today':
+            return orderDate.toDateString() === now.toDateString();
+          case 'last7':
+            return (now - orderDate) / (1000 * 60 * 60 * 24) <= 7;
+          case 'last30':
+            return (now - orderDate) / (1000 * 60 * 60 * 24) <= 30;
+          case 'last90':
+            return (now - orderDate) / (1000 * 60 * 60 * 24) <= 90;
+          default:
+            return true;
+        }
+      } catch (error) {
+        console.error('Error filtering order by date:', error);
+        return false;
       }
     });
   };

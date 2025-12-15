@@ -22,13 +22,29 @@ export default function Button({
     lg: 'px-6 py-3 text-lg',
   }
   
+  // Validate variant and size
+  const validVariant = variants[variant] ? variant : 'primary'
+  const validSize = sizes[size] ? size : 'md'
+  
   const disabledStyles = disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+  
+  const handleClick = (e) => {
+    if (disabled) {
+      e.preventDefault()
+      return
+    }
+    try {
+      onClick?.(e)
+    } catch (error) {
+      console.error('Button click error:', error)
+    }
+  }
   
   return (
     <button
-      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${disabledStyles} ${className}`}
+      className={`${baseStyles} ${variants[validVariant]} ${sizes[validSize]} ${disabledStyles} ${className}`}
       disabled={disabled}
-      onClick={onClick}
+      onClick={handleClick}
       {...props}
     >
       {children}
