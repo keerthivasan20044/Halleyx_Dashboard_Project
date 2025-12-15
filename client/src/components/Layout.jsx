@@ -16,7 +16,7 @@ const Layout = ({ children }) => {
   ];
 
   return (
-    <div className="flex min-h-screen md:h-screen bg-gray-50">
+    <div className="flex min-h-screen md:h-screen bg-gray-50" style={{ WebkitOverflowScrolling: 'touch' }}>
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && !isBuilderPage && (
         <div 
