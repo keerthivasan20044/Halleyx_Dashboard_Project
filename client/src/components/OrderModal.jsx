@@ -296,7 +296,7 @@ const OrderModal = ({ order, onSave, onClose }) => {
                   min="1"
                   value={formData.quantity}
                   onInput={(e) => {
-                    e.target.value = e.target.value.replace(/[^1-9]/g, '').replace(/^0+/, '') || '1';
+                    e.target.value = e.target.value.replace(/[^0-9]/g, '').replace(/^0+(?=\d)/, '') || (e.target.value === '0' ? '0' : '1');
                   }}
                   onChange={(e) => handleChange('quantity', parseInt(e.target.value) || 1)}
                   className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
